@@ -13,7 +13,7 @@ exports.create = (req, res) => {
         flightNo: req.body.flightNo,
         depCity: req.body.depCity,
         arrCity: req.body.arrCity,
-        airlineName: req.body.airlineName,
+        //airlineName: req.body.airlineName,
         planeModel: req.body.planeModel
     });
 
@@ -26,4 +26,36 @@ exports.create = (req, res) => {
           });
         else res.send(data);
       });
+};
+
+exports.findOne = (req, res) => {
+  Flight.findByDepCity(req.params.depCity, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found Flight with id ${req.params.depCity}.`
+        });
+      } else {
+        res.status(500).send({
+          message: "Error retrieving Flight with flightNo " + req.params.depCity
+        });
+      }
+    } else res.send(data);
+  });
+};
+
+exports.delete = (req, res) => {
+  Flight.remove(req.params.flightNo, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found Flight with flightNo ${req.params.flightNo}.`
+        });
+      } else {
+        res.status(500).send({
+          message: "Could not delete Flight with id " + req.params.flightNo
+        });
+      }
+    } else res.send({ message: `Flight was deleted successfully!` });
+  });
 };
